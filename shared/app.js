@@ -201,7 +201,11 @@
     done.querySelector(".done__msg").textContent = T(
       "ขอบคุณค่ะ คุณ" + name + " เราล็อกราคา ฿990 ไว้ให้แล้ว ทีมงานจะทักไปที่เบอร์ " + phone + " เมื่อล็อตแรกพร้อมส่ง",
       "Thank you, " + name + ". Your ฿990 price is locked in. Our team will contact you at " + phone + " when the first batch is ready.");
-    if (!TEST && window.fbq) fbq("track", "Lead", { content_name: "Mango Crush pre-order", value: 990, currency: "THB" }, { eventID: "res-" + vid + "-" + Date.now() });
+    if (!TEST && window.fbq) {   // reservation = Lead + CompleteRegistration (the website campaign optimises for the latter; Sales objectives can't use Lead)
+      var eid = "res-" + vid + "-" + Date.now();
+      fbq("track", "Lead", { content_name: "Mango Crush pre-order", value: 990, currency: "THB" }, { eventID: eid });
+      fbq("track", "CompleteRegistration", { content_name: "Mango Crush pre-order", value: 990, currency: "THB", status: "reserved" }, { eventID: eid + "-cr" });
+    }
     form.classList.add("is-leaving");
     setTimeout(function () { form.hidden = true; done.hidden = false; }, REDUCE ? 0 : 260);
   }
